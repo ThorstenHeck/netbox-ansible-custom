@@ -1,0 +1,63 @@
+---
+- set_fact:
+    mount: "{{ ansible_mounts | first }}"
+- set_fact:
+    disk_total_s: "{{ (mount.size_total / 1000000000) | round(1, 'common') }}" 
+- set_fact:
+    disk_total_s: "{{  disk_total_s.split('.')[0] }}"
+    interfaces_list: "{{ ansible_facts | build_ipv4_from_facts }}"
+- set_fact:
+    primary_ip: "{{ ansible_facts | get_primary_ip }}"
+
+- name: "TASK 0: CREATE VIRTUAL MACHINE"
+  netbox.netbox.netbox_virtual_machine:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ inventory_hostname }}"
+      site: "{{ site_vm }}"
+      cluster: "{{ cluster_vm }}"
+      tenant: "{{ tenant_vm }}"
+      platform: "{{ ansible_facts['distribution'] | trim }} {{ ansible_facts['distribution_version'] }}"
+      virtual_machine_role: "{{ virtual_machine_role }}"
+      vcpus: "{{ ansible_facts['processor_vcpus'] }}"
+      memory: "{{ ansible_memtotal_mb }}"
+      disk: "{{ disk_total_s }}"
+  delegate_to: localhost
+
+- name: "TASK 1: Create interfaces"
+  netbox.netbox.netbox_vm_interface:
+    netbox_url: "{{ lookup('ENV', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('ENV', 'NETBOX_API_KEY') }}"
+    data:
+      virtual_machine: "{{ inventory_hostname }}"
+      name: "{{ item.interface }}"
+      mtu: "{{ item.mtu }}"
+      mac_address: "{{ item.mac_address }}"
+    state: present
+  with_items: "{{ interfaces_list }}"
+  delegate_to: localhost
+
+- name: "TASK 2:  ASSIGN IP ADDRESS TO THE INTERFACES"
+  netbox.netbox.netbox_ip_address:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      address: " {{ item.address }} "
+      assigned_object:
+        name: " {{ item.interface }} "
+        virtual_machine: " {{ inventory_hostname }} "
+    state: present
+  with_items: " {{ interfaces_list }} "
+  delegate_to: localhost
+
+- name: "TASK 3:  ASSIGN PRIMARY ADDRESS TO THE DEVICE"
+  netbox.netbox.netbox_virtual_machine:
+    netbox_url: "{{ lookup('ENV', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('ENV', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ inventory_hostname }}"
+      primary_ip4: "{{ item.address }}"
+    state: present
+  with_items: " {{ primary_ip }} "
+  delegate_to: localhost

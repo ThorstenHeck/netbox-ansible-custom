@@ -1,0 +1,4 @@
+---
+site_vm: "FFM"
+cluster_vm: "Proxmox-FFM"
+tenant_vm: "kubermatic"

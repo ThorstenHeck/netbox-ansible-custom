@@ -1,0 +1,141 @@
+---
+# defaults file for netbox.setup
+
+racks:
+  - name: "FFM_01_PROXMOX"
+    site: "FFM"
+  - name: "FFM_01_KUBERMATIC"
+    site: "FFM"
+  - name: "FKB_01_PROXMOX"
+    site: "FKB"
+
+rirs:
+  - name: RFC1918
+    is_private: True
+
+aggregates:
+  - { name: "10.0.0.0/8", desc: RFC1918 - 10, rir: RFC1918 }
+  - { name: "172.16.0.0/12", desc: RFC1918 - 172, rir: RFC1918 }
+  - { name: "192.0.2.0/24", desc: RFC5735 - 192.0.2.0, rir: RFC1918 }
+  - { name: "192.168.0.0/16", desc: RFC1918 - 192, rir: RFC1918 }
+
+prefixes:
+  - { prefix: "10.252.24.0/27", tenant: "kubermatic", site: "FFM", vlan: "VL2034_K8S_MASTER", ispool: false }
+  - { prefix: "10.252.24.32/28", tenant: "kubermatic", site: "FFM", vlan: "VL2038_K8S_REGISTRY", ispool: false }
+  - { prefix: "10.252.24.48/28", tenant: "kubermatic", site: "FFM", vlan: "VL2039_K8S_JUMP", ispool: false }
+  - { prefix: "10.252.24.64/26", tenant: "kubermatic", site: "FFM", vlan: "VL2037_K8S_FRONT", ispool: false }
+  - { prefix: "10.252.25.0/24", tenant: "kubermatic", site: "FFM", vlan: "VL2035_K8S_SEED", ispool: false }
+  - { prefix: "10.252.26.0/24", tenant: "kubermatic", site: "FFM", vlan: "VL2036_K8S_WORKER", ispool: false }
+  - { prefix: "10.252.28.0/24", tenant: "kubermatic", site: "FFM", vlan: "VL2044_K8S_PRD_WORKER", ispool: false }
+  - { prefix: "10.251.24.0/27", tenant: "kubermatic", site: "FKB", vlan: "VL3034_K8S_MASTER", ispool: false }
+  - { prefix: "10.251.24.32/28", tenant: "kubermatic", site: "FKB", vlan: "VL3038_K8S_REGISTRY", ispool: false }
+  - { prefix: "10.251.24.48/28", tenant: "kubermatic", site: "FKB", vlan: "VL3039_K8S_JUMP", ispool: false }
+  - { prefix: "10.251.24.64/26", tenant: "kubermatic", site: "FKB", vlan: "VL3037_K8S_FRONT", ispool: false }
+  - { prefix: "10.251.25.0/24", tenant: "kubermatic", site: "FKB", vlan: "VL3035_K8S_SEED", ispool: false }
+  - { prefix: "10.251.26.0/24", tenant: "kubermatic", site: "FKB", vlan: "VL3036_K8S_WORKER", ispool: false }
+  - { prefix: "10.251.28.0/24", tenant: "kubermatic", site: "FKB", vlan: "VL3044_K8S_PRD_WORKER", ispool: false }
+  - { prefix: "10.252.27.0/29", tenant: "RKI", site: "FFM", vlan: "VL2040_RKI_DEV_DB", ispool: false }
+  - { prefix: "10.252.27.24/29", tenant: "RKI", site: "FFM", vlan: "VL2047_RKI_DB_REF", ispool: false }
+  - { prefix: "10.252.27.16/29", tenant: "RKI", site: "FFM", vlan: "VL2046_RKI_DB_QS", ispool: false }
+  - { prefix: "10.252.27.8/29", tenant: "RKI", site: "FFM", vlan: "VL2045_RKI_DB_PRD", ispool: false }
+  - { prefix: "10.251.27.0/29", tenant: "RKI", site: "FKB", vlan: "VL3040_K8S_RKI_DB_DEV", ispool: false }
+  - { prefix: "10.251.27.24/29", tenant: "RKI", site: "FKB", vlan: "VL3047_RKI_DB_REF", ispool: false }
+  - { prefix: "10.251.27.16/29", tenant: "RKI", site: "FKB", vlan: "VL3046_RKI_DB_QS", ispool: false }
+  - { prefix: "10.251.27.8/29", tenant: "RKI", site: "FKB", vlan: "VL3045_RKI_DB_PRD", ispool: false }
+
+vlans:
+  - { vid: 2034, name: "VL2034_K8S_MASTER", tenant: "kubermatic", site: "FFM" }
+  - { vid: 2038, name: "VL2038_K8S_REGISTRY", tenant: "kubermatic", site: "FFM" }
+  - { vid: 2039, name: "VL2039_K8S_JUMP", tenant: "kubermatic", site: "FFM" }
+  - { vid: 2037, name: "VL2037_K8S_FRONT", tenant: "kubermatic", site: "FFM" }
+  - { vid: 2035, name: "VL2035_K8S_SEED", tenant: "kubermatic", site: "FFM" }
+  - { vid: 2036, name: "VL2036_K8S_WORKER", tenant: "kubermatic", site: "FFM" }
+  - { vid: 2044, name: "VL2044_K8S_PRD_WORKER", tenant: "kubermatic", site: "FFM" }
+  - { vid: 3034, name: "VL3034_K8S_MASTER", tenant: "kubermatic", site: "FKB" }
+  - { vid: 3038, name: "VL3038_K8S_REGISTRY", tenant: "kubermatic", site: "FKB" }
+  - { vid: 3039, name: "VL3039_K8S_JUMP", tenant: "kubermatic", site: "FKB" }
+  - { vid: 3037, name: "VL3037_K8S_FRONT", tenant: "kubermatic", site: "FKB" }
+  - { vid: 3035, name: "VL3035_K8S_SEED", tenant: "kubermatic", site: "FKB" }
+  - { vid: 3036, name: "VL3036_K8S_WORKER", tenant: "kubermatic", site: "FKB" }
+  - { vid: 3044, name: "VL3044_K8S_PRD_WORKER", tenant: "kubermatic", site: "FKB" }
+  - { vid: 2040, name: "VL2040_RKI_DEV_DB", tenant: "RKI", site: "FFM" }
+  - { vid: 2047, name: "VL2047_RKI_DB_REF", tenant: "RKI", site: "FFM" }
+  - { vid: 2046, name: "VL2046_RKI_DB_QS", tenant: "RKI", site: "FFM" }
+  - { vid: 2045, name: "VL2045_RKI_DB_PRD", tenant: "RKI", site: "FFM" }
+  - { vid: 3040, name: "VL3040_K8S_RKI_DB_DEV", tenant: "RKI", site: "FKB" }
+  - { vid: 3047, name: "VL3047_RKI_DB_REF", tenant: "RKI", site: "FKB" }
+  - { vid: 3046, name: "VL3046_RKI_DB_QS", tenant: "RKI", site: "FKB" }
+  - { vid: 3045, name: "VL3045_RKI_DB_PRD", tenant: "RKI", site: "FKB" }
+
+cluster:
+  - { name: "Proxmox-FFM", cluster_type: "Proxmox", cluster_group: "Proxmox", site: "FFM", tenant_group: "3ascloud", tenant: "3ascloud", description: "https://10.3.5.50:8006" }
+  - { name: "Proxmox-FKB", cluster_type: "Proxmox", cluster_group: "Proxmox", site: "FKB", tenant_group: "3ascloud", tenant: "3ascloud", description: "https://10.3.5.50:8006" }
+
+cluster_group:
+  - { name: "Proxmox"}
+
+cluster_type: 
+  - { name: "Proxmox"}
+
+tenant_group:
+  - { name: "3ascloud"}
+  - { name: "kubermatic"}
+
+tenant:
+  - { name: "3ascloud", tenant_group: "3ascloud"}
+  - { name: "kubermatic", tenant_group: "kubermatic"}
+  - { name: "RKI", tenant_group: "kubermatic"}
+  - { name: "BHYP RITA", tenant_group: "kubermatic"}
+  - { name: "BHYP PM2", tenant_group: "kubermatic"}
+
+region:
+  - { name: "Frankfurt"}
+  - { name: "Karlsruhe"}
+
+site_group:
+  - { name: "Frankfurt"}
+  - { name: "Karlsruhe"}
+
+site:
+  - { name: "FFM", site_group: "Frankfurt", region: "Frankfurt", tenant: "3ascloud", time_zone: "Europe/Berlin"}
+  - { name: "FKB", site_group: "Karlsruhe", region: "Karlsruhe", tenant: "3ascloud", time_zone: "Europe/Berlin"}
+
+manufacturer:
+  - { name: "Dell"}
+
+device_type:
+  - {model: "PowerEdge R650xs", manufacturer: "Dell", u_height: 1, weight: 18.62, weight_unit: "kg", is_full_depth: True}
+
+device_roles:
+  - { name: Firewall, color: FF0000, vmrole: True }
+  - { name: Router, color: 000080, vmrole: True }
+  - { name: Server, color: "000000", vmrole: True }
+  - { name: Switch, color: 008000, vmrole: True }
+  - { name: VM, color: 00FFFF, vmrole: True }
+
+platforms:
+  - { name: Ubuntu 18.04, slug: ubuntu-18-04 }
+  - { name: Ubuntu 16.04, slug: ubuntu-16-04 }
+  - { name: Ubuntu 20.04, slug: ubuntu-20-04 }
+  - { name: Ubuntu 22.04, slug: ubuntu-22-04 }
+  - { name: Rocky 8.7, slug: rocky-8-7 }
+  - { name: Rocky 8, slug: rocky-8 }
+  - { name: Rocky 9, slug: rocky-9 }
+
+device:
+  - { name: "aaasp-pve-p005", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "aaasp-pve-p006", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "aaasp-pve-p007", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "ffm-pve-01-s01", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "ffm-pve-01-s02", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "ffm-pve-01-s03", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "ffm-pve-01-s04", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FFM", cluster: "Proxmox-FFM"}
+  - { name: "aaasp-pve-p001", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+  - { name: "aaasp-pve-p002", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+  - { name: "aaasp-pve-p003", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+  - { name: "aaasp-pve-p004", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+  - { name: "aaasp-pve-p012", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+  - { name: "aaasp-pve-p013", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+  - { name: "aaasp-pve-p014", device_type: "PowerEdge R650xs", device_role: "Server", tenant: "3ascloud", platform: "ubuntu-22-04", site: "FKB", cluster: "Proxmox-FKB"}
+
+virtual_machine_role: "VM"

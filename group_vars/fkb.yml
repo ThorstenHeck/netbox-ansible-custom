@@ -1,0 +1,4 @@
+---
+site_vm: "FKB"
+cluster_vm: "Proxmox-FKB"
+tenant_vm: "kubermatic"

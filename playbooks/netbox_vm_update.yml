@@ -1,0 +1,7 @@
+---
+- name: "Update all VMs to Netbox"
+  hosts: FFM
+  gather_facts: True
+
+  roles:
+    - role: roles/netbox.vm_update

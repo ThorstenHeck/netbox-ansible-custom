@@ -1,0 +1,200 @@
+---
+- name: "TASK 0: CREATE CLUSTER GROUP"
+  netbox.netbox.netbox_cluster_group:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+    state: present
+  loop: "{{ cluster_type }}"
+
+- name: "TASK 1: CREATE CLUSTER TYPE"
+  netbox.netbox.netbox_cluster_type:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+    state: present
+  loop: "{{ cluster_type }}"
+
+- name: "TASK 2: CREATE TENANT GROUP"
+  netbox.netbox.netbox_tenant_group:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+    state: present
+  loop: "{{ tenant_group }}"
+
+- name: "TASK 3: CREATE TENANT"
+  netbox.netbox.netbox_tenant:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+      tenant_group: "{{ item.tenant_group }}"
+    state: present
+  loop: "{{ tenant }}"
+
+- name: "TASK 4: CREATE REGION"
+  netbox.netbox.netbox_region:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+    state: present
+  loop: "{{ region }}"
+
+- name: "TASK 5: CREATE SITE GROUP"
+  netbox.netbox.netbox_site_group:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+    state: present
+  loop: "{{ site_group }}"
+
+- name: "TASK 6: CREATE SITE"
+  netbox.netbox.netbox_site:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+      site_group: "{{ item.site_group }}"
+      region: "{{ item.region }}"
+      tenant: "{{ item.tenant }}"
+      time_zone: "{{ item.time_zone }}"
+    state: present
+  loop: "{{ site }}"
+
+- name: "TASK 7: CREATE CLUSTER"
+  netbox.netbox.netbox_cluster:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+      cluster_type: "{{ item.cluster_type }}"
+      cluster_group: "{{ item.cluster_group }}"
+      tenant: "{{ item.tenant }}"
+      site: "{{ item.site }}"
+      description: "{{ item.description }}"
+    state: present
+  loop: "{{ cluster }}"
+
+- name: "TASK 8: CREATE MANUFACTOR"
+  netbox.netbox.netbox_manufacturer:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+  loop: "{{ manufacturer }}"
+
+- name: "TASK 9: CREATE DEVICE TYPE"
+  netbox.netbox.netbox_device_type:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      model: "{{ item.model }}"
+      manufacturer: "{{ item.manufacturer }}"
+      u_height: "{{ item.u_height }}"
+      weight: "{{ item.weight }}"
+      weight_unit: "{{ item.weight_unit }}"
+      is_full_depth: "{{ item.is_full_depth }}"
+  loop: "{{ device_type }}"
+
+- name: "TASK 10: CREATE DEVICE ROLE"
+  netbox.netbox.netbox_device_role:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+      color: "{{ item.color }}"
+      vm_role: "{{ item.vmrole }}"
+  loop: "{{ device_roles }}"
+
+- name: "TASK 11: CREATE PLATFORM"
+  netbox.netbox.netbox_platform:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+      slug: "{{ item.slug }}"
+  loop: "{{ platforms }}"
+
+- name: "TASK 12: CREATE DEVICE"
+  netbox.netbox.netbox_device:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ item.name }}"
+      device_type: "{{ item.device_type }}"
+      device_role: "{{ item.device_role }}"
+      tenant: "{{ item.tenant }}"
+      platform: "{{ item.platform }}"
+      site: "{{ item.site }}"
+      cluster: "{{ item.cluster }}"
+  loop: "{{ device }}"
+
+- name: "TASK 13: SETUP RACKS"
+  netbox.netbox.netbox_rack:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data: "{{ rack }}"
+  loop: "{{ racks }}"
+  loop_control:
+    loop_var: rack
+    label: "{{ rack['name'] }}"
+
+- name: "TASK 13: SETUP VLANS"
+  netbox.netbox.netbox_vlan:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ vlan.name }}"
+      vid: "{{ vlan.vid }}"
+      site: "{{ vlan.site }}"
+      tenant: "{{ vlan.tenant }}"
+  register: result
+  loop: "{{ vlans }}"
+  loop_control:
+    loop_var: vlan
+    label: "{{ vlan['vid'] }}"
+
+- name: "TASK 14: SETUP RFC1918 RIR"
+  netbox.netbox.netbox_rir:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data: "{{ rir }}"
+  loop: "{{ rirs }}"
+  loop_control:
+    loop_var: rir
+    label: "{{ rir['name'] }}"
+
+- name: "TASK 15: SETUP AGGREGRATES"
+  netbox.netbox.netbox_aggregate:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      prefix: "{{ aggregate.name }}"
+      description: "{{ aggregate.desc }}"
+      rir: "{{ aggregate.rir }}"
+  loop: "{{ aggregates }}"
+  loop_control:
+    loop_var: aggregate
+    label: "{{ aggregate['name'] }}"
+
+- name: "TASK 16: SETUP PREFIXES"
+  netbox.netbox.netbox_prefix:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      family: 4
+      prefix: "{{ prefix.prefix }}"
+      site: "{{ prefix.site }}"
+      is_pool: "{{ prefix.ispool }}"
+      tenant: "{{ prefix.tenant }}"
+      vlan: "{{ prefix.vlan }}"
+  loop: "{{ prefixes }}"
+  loop_control:
+    loop_var: prefix
+    label: "{{ prefix['prefix'] }}"

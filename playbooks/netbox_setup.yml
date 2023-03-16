@@ -1,0 +1,7 @@
+---
+- name: "Netbox initial setup"
+  hosts: localhost
+  connection: local
+
+  roles:
+    - role: roles/netbox.setup

@@ -1,0 +1,69 @@
+---
+- set_fact:
+    mount: "{{ ansible_mounts | first }}"
+- set_fact:
+    disk_total_s: "{{ (mount.size_total / 1000000000) | round(1, 'common') }}"
+- set_fact:
+    disk_total: "{{  disk_total_s.split(".")[0] }}"
+- set_fact:
+    vcpu_cores: "{{ ansible_facts['processor_vcpus'] }}" 
+- set_fact:
+    interfaces_list: "{{ ansible_facts | build_ipv4_from_facts }}"
+- set_fact:
+    primary_ip: "{{ ansible_facts['default_ipv4']['address']}}" 
+- set_fact:
+    platform: "{{ ansible_facts['lsb']['description']}}" 
+- set_fact:
+    name: "{{ inventory_hostname }}" 
+
+- name: vcpu cores output
+  debug:
+    msg: " {{ vcpu_cores }}"
+
+- name: interfaces_list output
+  debug:
+    msg: "{{ interfaces_list }}"
+
+- name: disk total output old
+  debug:
+    msg: " {{ disk_total_s }}"
+
+- name: disk total output new
+  debug:
+    msg: " {{ disk_total }}"
+
+
+- name: total memory output
+  debug:
+    msg: " {{ ansible_memtotal_mb }}"
+- name: primary IP output
+  debug:
+    msg: " {{ primary_ip }}"
+
+- name: platform output
+  debug:
+    msg: "{{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+
+- name: name output
+  debug:
+    msg: " {{ inventory_hostname }}"
+
+
+
+
+
+- name: "TASK 4.1: CREATE VIRTUAL MACHINE"
+  netbox.netbox.netbox_virtual_machine:
+    netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+    data:
+      name: "{{ inventory_hostname }}"
+      site: "{{ site_vm }}"
+      cluster: "{{ cluster_vm }}"
+      tenant: "{{ tenant_vm }}"
+      platform: "{{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+      virtual_machine_role: "{{ virtual_machine_role }}"
+      vcpus: "{{ ansible_facts['processor_vcpus'] }}"
+      primary_ip4: "{{ ansible_facts['default_ipv4']['address'] }}"
+      memory: "{{ ansible_memtotal_mb }}"
+      disk: "{{ disk_total_s }}"
