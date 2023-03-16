@@ -1,6 +1,6 @@
 ---
 - name: "Update all VMs to Netbox"
-  hosts: FFM
+  hosts: FKB
   gather_facts: True
 
   roles:
