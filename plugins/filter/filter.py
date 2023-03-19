@@ -30,6 +30,7 @@ class FilterModule:
             "build_ipv4_from_facts": FilterModule.build_ipv4_from_facts,
             "get_interface_id": FilterModule.get_interface_id,
             "get_primary_ip": FilterModule.get_primary_ip,
+            "proxmox_vm_interface": FilterModule.proxmox_vm_interface,
             
             
         }
@@ -140,55 +141,50 @@ class FilterModule:
 
     @staticmethod
     def build_ipv4_from_facts(ansible_facts):
-        """
-        Method to build IPv4 CIDR address from the Ansible Facts output:
+        def get_proxmox_vars():
 
-        "GigabitEthernet0/0": {
-                "bandwidth": 1000000,
-                "description": null,
-                "duplex": "Auto",
-                "ipv4": [
-                    {
-                        "address": "192.168.0.167",
-                        "subnet": "24"
-                    }
-                ],
-                "lineprotocol": "up",
-                "macaddress": "0c25.ea08.4900",
-                "mediatype": "RJ45",
-                "mtu": 1500,
-                "operstatus": "up",
-                "type": "iGbE"
-            },
-            "GigabitEthernet0/1": {
-                "bandwidth": 1000000,
-                "description": null,
-                "duplex": "Auto",
-                "ipv4": [
-                    {
-                        "address": "172.31.1.1",
-                        "subnet": "24"
-                    }
-                ],
-                "lineprotocol": "up",
-                "macaddress": "0c25.ea08.4901",
-                "mediatype": "RJ45",
-                "mtu": 1500,
-                "operstatus": "up",
-                "type": "iGbE"
-            },
+            return
+        
+        def convert_mac_address(mac_address):
+            if mac_address in ("None", None):
+                mac_address = "0000.0000.0000"
 
-        ========================================================================
+            mac_address = mac_address.upper()
+            mac_address = mac_address.replace(".", "")
+            mac_address = mac_address.replace("-", "")
+            mac_address = mac_address.replace(":", "")
+            mac_address = ":".join(
+                [mac_address[i : i + 2] for i, j in enumerate(mac_address) if not i % 2]
+            )
 
-        Returns: [
-            {"interface": "GigabitEthernet0/0", "address": "192.168.0.167/24"},
-            {"interface": "GigabitEthernet0/1", "address": "172.31.1.1/24"}
-        ]
+            return mac_address
+        
+        return_list = []
+        interface_list = ansible_facts.get("interfaces")
 
-        [summary]
-        Args:
-            ipv4_dict (dict): Dictionary from Ansible Facts representing addresses
-        """
+        for interface in interface_list:
+            interface_facts = ansible_facts.get(interface)
+            if interface_facts is not None:
+
+                device_name = interface_facts.get("device")
+                mtu         = interface_facts.get("mtu")
+                mac_address  = interface_facts.get("macaddress")
+                converted_mac = convert_mac_address(mac_address)
+                ipv4         = interface_facts.get("ipv4")
+                if ipv4 is not None:
+                    ip_address = ipv4.get("address")
+                    netmask = ipv4.get("netmask")
+                    subnetmask = (ipaddress.IPv4Network((0,netmask))).prefixlen
+                    cidr = f"{ip_address}/{subnetmask}"
+
+                    untagged_vlan = 
+
+                    return_list.append({"interface": device_name, "address": cidr, "mac_address": converted_mac, "mtu": mtu, untagged_vlan:[{name:'Mickey Mouse', site: "test"}]})
+
+        return return_list
+
+    @staticmethod
+    def proxmox_vm_interface(ansible_facts):
 
         def convert_mac_address(mac_address):
             if mac_address in ("None", None):

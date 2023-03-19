@@ -38,6 +38,43 @@
   with_items: "{{ interfaces_list }}"
   delegate_to: localhost
 
+# - name: "TASK 1: Create interfaces with vlan and tags"
+#   netbox.netbox.netbox_vm_interface:
+#     netbox_url: "{{ lookup('ENV', 'NETBOX_URL') }}"
+#     netbox_token: "{{ lookup('ENV', 'NETBOX_API_KEY') }}"
+#     data:
+#       virtual_machine: "{{ inventory_hostname }}"
+#       name: "{{ item.interface }}"
+#       mtu: "{{ item.mtu }}"
+#       mac_address: "{{ item.mac_address }}"
+#       untagged_vlan:
+#         name: ""
+#         site: ""
+#     state: present
+#   with_items: "{{ interfaces_list }}"
+#   delegate_to: localhost
+
+
+#     - name: Create interface as a trunk port
+#       netbox_vm_interface:
+#         netbox_url: http://netbox.local
+#         netbox_token: thisIsMyToken
+#         data:
+#           virtual_machine: test100
+#           name: GigabitEthernet25
+#           enabled: false
+#           untagged_vlan:
+#             name: Wireless
+#             site: Test Site
+#           tagged_vlans:
+#             - name: Data
+#               site: Test Site
+#             - name: VoIP
+#               site: Test Site
+#           mtu: 1600
+#           mode: Tagged
+#         state: present
+
 - name: "TASK 2:  ASSIGN IP ADDRESS TO THE INTERFACES"
   netbox.netbox.netbox_ip_address:
     netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
